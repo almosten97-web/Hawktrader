@@ -1,0 +1,5 @@
+{
+  "name": "HawkTrade",
+  "description": "A high-performance stock market dashboard featuring real-time Polygon.io data integration and Gemini-powered financial analysis.",
+  "requestFramePermissions": []
+}
