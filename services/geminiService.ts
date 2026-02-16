@@ -32,7 +32,7 @@ export const getAIAnalysis = async (
       contents: prompt,
       config: {
         temperature: 0.7,
-        // Removed thinkingBudget: 0 as gemini-3-pro-preview requires thinking mode.
+        thinkingConfig: { thinkingBudget: 4096 } // Non-zero budget required for Pro
       }
     });
     
@@ -51,10 +51,14 @@ export const askGemini = async (ticker: string, question: string): Promise<strin
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: prompt,
-      config: { temperature: 0.4 }
+      config: { 
+        temperature: 0.4,
+        thinkingConfig: { thinkingBudget: 1024 } // Use a small budget instead of 0
+      }
     });
     return response.text || "No data returned.";
   } catch (err) {
+    console.error("Ask Gemini error:", err);
     return "Error connecting to Gemini Terminal.";
   }
 };
@@ -79,6 +83,7 @@ Guidelines:
         systemInstruction,
         temperature: 0.1, 
         responseMimeType: "application/json",
+        thinkingConfig: { thinkingBudget: 1024 },
         responseSchema: {
           type: Type.OBJECT,
           properties: {
@@ -97,7 +102,9 @@ Guidelines:
       }
     });
 
-    const result = JSON.parse(response.text || '{}');
+    const textOutput = response.text || '{}';
+    const result = JSON.parse(textOutput);
+    
     return {
       ticker: result.ticker ?? ticker,
       score: result.score ?? 0,
@@ -137,6 +144,7 @@ export const getMorningBriefing = async (): Promise<MorningBriefing> => {
         tools: [{ googleSearch: {} }],
         temperature: 0.3,
         responseMimeType: "application/json",
+        thinkingConfig: { thinkingBudget: 4096 },
         responseSchema: {
           type: Type.OBJECT,
           properties: {
@@ -159,7 +167,8 @@ export const getMorningBriefing = async (): Promise<MorningBriefing> => {
       }
     });
 
-    const data = JSON.parse(response.text || '{}');
+    const textOutput = response.text || '{}';
+    const data = JSON.parse(textOutput);
     
     const sources: Array<{ title: string; uri: string }> = [];
     const chunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;

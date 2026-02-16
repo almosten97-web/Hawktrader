@@ -1,9 +1,11 @@
+
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HawkTrade | Dashboard</title>
+    <title>HawkTrade | High-Performance Dashboard</title>
+    <!-- Note: Tailwind CDN is used here for JIT compilation of custom classes in this sandbox environment -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -26,6 +28,8 @@
             margin: 0;
             font-family: 'Inter', sans-serif;
             overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         .custom-scrollbar::-webkit-scrollbar {
@@ -40,6 +44,11 @@
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
             background: #334155;
+        }
+        
+        /* Disable Tailwind console warning if possible or at least ensure play CDN doesn't block */
+        @layer base {
+          html { scroll-behavior: smooth; }
         }
     </style>
 <script type="importmap">
